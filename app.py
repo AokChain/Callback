@@ -1,39 +1,11 @@
-from flask import Flask, render_template
-from webargs.flaskparser import use_args
-from flask_socketio import join_room
-from flask_socketio import SocketIO
-from webargs import fields
-from flask import request
+from service import create_app
+import config
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "Lorem ipsum dor sit amet"
-socketio = SocketIO(app)
+app = create_app()
 
-args = {
-    "signature": fields.Str(required=True),
-    "address": fields.Str(required=True)
-}
-
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/app.json")
-def app_json():
-    return {
-        "name": "Callback Test",
-        "icon": "https://callback.codepillow.io/static/codepillow.png"
-    }
-
-@app.route("/call/<string:session>", methods=["POST"])
-@use_args(args, location="json")
-def call(args, session):
-    socketio.emit(session, args, to=session)
-    return {
-        "status": "success"
-    }
-
-@socketio.on("callback")
-def callback(session, *args):
-    join_room(session, request.sid)
-    return True
+if __name__ == "__main__":
+    app.run(
+        debug=config.debug,
+        host=config.host,
+        port=config.port
+    )

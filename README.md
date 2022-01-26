@@ -1,8 +1,8 @@
-You can run this example using this command:
+# Callback
 
-```
-gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:9000 --reload
-```
+Callback service is used to get reply from mobile wallet back to web serive.
+
+## Setup
 
 Systemd example:
 
@@ -12,11 +12,11 @@ Description=Gunicorn instance to serve callback example
 After=network.target
 
 [Service]
-User=mman
+User=user
 Group=www-data
-WorkingDirectory=/home/mman/callback
-Environment="PATH=/home/mman/callback/venv/bin"
-ExecStart=/home/mman/callback/venv/bin/gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:9000 --reload
+WorkingDirectory=/home/user/callback
+Environment="PATH=/home/user/callback/venv/bin"
+ExecStart=/home/user/callback/venv/bin/gunicorn app:app --worker-class eventlet -w 1 --bind 0.0.0.0:9000 --reload
 
 [Install]
 WantedBy=multi-user.target
@@ -47,5 +47,4 @@ server {
         proxy_pass http://localhost:9000/socket.io;
     }
 }
-
 ```
