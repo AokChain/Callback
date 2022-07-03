@@ -11,6 +11,10 @@ callback_args = {
     "address": fields.Str(required=True)
 }
 
+swap_args = {
+    "raw": fields.Str(required=True)
+}
+
 def create_app():
     app = Flask(__name__)
     app.config["SECRET_KEY"] = config.secret
@@ -31,6 +35,14 @@ def create_app():
         @app.route("/call/<string:session>", methods=["POST"])
         @use_args(callback_args, location="json")
         def call(args, session):
+            socketio.emit(session, args, to=session)
+            return {
+                "status": "success"
+            }
+
+        @app.route("/swap/<string:session>", methods=["POST"])
+        @use_args(swap_args, location="json")
+        def swap(args, session):
             socketio.emit(session, args, to=session)
             return {
                 "status": "success"
